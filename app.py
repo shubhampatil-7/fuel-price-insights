@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objs as go
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.arima.model import ARIMA
+import joblib
+import os
 
 st.title('Fuel Price Insights: Analyzing Historical Trends And Predicting Future Price Movements')
 
@@ -57,10 +59,22 @@ generate_sarima = st.sidebar.button('Generate SARIMA Forecast')
 generate_arima = st.sidebar.button('Generate ARIMA Forecast')
 
 # Helper functions for forecasting
-def perform_sarima_forecasting(product_data, n_weeks):
-    sarima_model = SARIMAX(product_data, order=(1, 1, 0), seasonal_order=(1, 1, 0, 52))
-    sarima_results = sarima_model.fit()
-    forecast = sarima_results.get_forecast(steps=n_weeks)
+def perform_sarima_forecasting(product_data, n_weeks, use_cached_model=True):
+    model_path = 'sarima_model.pkl'
+    if use_cached_model and os.path.exists(model_path):
+        # Load the model from the disk
+        with open(model_path, 'rb') as file:
+            sarima_model = joblib.load(file)
+    else:
+        # Fit a new model
+        sarima_model = SARIMAX(product_data, order=(1, 1, 0), seasonal_order=(1, 1, 0, 52))
+        sarima_results = sarima_model.fit()
+        # Save the model to disk
+        with open(model_path, 'wb') as file:
+            joblib.dump(sarima_results, file)
+    
+    # Load the model and forecast
+    forecast = sarima_model.get_forecast(steps=n_weeks)
     forecast_index = pd.date_range(product_data.index[-1] + pd.DateOffset(weeks=1), periods=n_weeks, freq='W-MON')
     return forecast_index, forecast.predicted_mean
 
