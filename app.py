@@ -58,6 +58,13 @@ n_weeks = st.sidebar.number_input('Enter number of weeks to forecast:', min_valu
 generate_sarima = st.sidebar.button('Generate SARIMA Forecast')
 generate_arima = st.sidebar.button('Generate ARIMA Forecast')
 
+@st.experimental_singleton
+def load_model(model_path='sarima_model.pkl'):
+    with open(model_path, 'rb') as file:
+        model = joblib.load(file)
+    return model
+
+
 # Helper functions for forecasting
 def perform_sarima_forecasting(product_data, n_weeks, use_cached_model=True):
     model_path = 'sarima_model.pkl'
