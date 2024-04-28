@@ -22,15 +22,21 @@ To run the project on your local machine, follow these steps:
 
 1. Clone the repository:
 
-```git clone https://github.com/your-username/fuel-price-insights.git```
+```
+git clone https://github.com/your-username/fuel-price-insights.git
+```
 
 2. Install the required dependencies:
 
-```pip install -r requirements.txt```
+```
+pip install -r requirements.txt
+```
 
 3. Run the Streamlit application:
 
-```streamlit run app.py```
+```
+streamlit run app.py
+```
 
 
 ## Usage
